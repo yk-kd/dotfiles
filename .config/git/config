@@ -1,0 +1,101 @@
+[user]
+    name = yk-kd
+    email = 11691713+yk-kd@users.noreply.github.com
+
+[core]
+    pager = delta
+    preloadindex = true
+    quotepath = false
+
+[interactive]
+    diffFilter = delta --color-only
+
+[color]
+    ui = auto
+
+[branch]
+    autosetupmerge = true
+
+[diff]
+    colorMoved = default
+    algorithm = histogram
+    compactionHeuristic = true
+
+[merge]
+    conflictstyle = diff3
+    tool = nvim -d
+
+[push]
+    default = current
+
+[status]
+    showUntrackedFiles = all
+[alias]
+    branches = !git branch -a |fzf --preview 'echo {} | cut -c 3- | xargs git log' |sed "s#remotes/[^/]*/##" |xargs git switch
+    tags = !git tag |fzf --preview 'echo {} | xargs git show'
+    stashes = stash list
+    remotes = remote -v
+
+    unstage = reset -q HEAD --
+    discard = checkout --
+    uncommit = reset --mixed HEAD~
+    amend = commit --amend
+    nevermind = !git reset --hard HEAD && git clean -d -f
+    unmerged = diff --name-only --diff-filter=U
+    precommit = diff -w --cached --color-moved
+    pull-f = !git fetch && git reset --hard FETCH_HEAD
+
+    b = branch
+    c = commit
+    co = "!f() { args=$@; if [ -z \"$args\" ]; then branch=$(git branch --all | grep -v HEAD | fzf --preview 'echo {} | cut -c 3- | xargs git log --color=always'); git checkout $(echo $branch | sed 's#remotes/[^/]*/##'); else git checkout $args; fi }; f"
+    st = status
+    up = pull --rebase        # pull rebase
+    po  = push origin         # push origin
+    pof = push -f origin      # force
+    pu  = push -u origin      # push origin and set upstream
+    d = "!f() { args=$@; [ -z \"$args\" ] && args=HEAD; ([ \"$args\" = \"HEAD\" ] && git status --short || git diff --name-status $args | sed 's/\t/  /') | fzf --preview \"echo {} | cut -c 4- | xargs git diff --color=always $args --\" --multi --height 90% | cut -c 4-; }; f"
+    da = !git d | xargs git add --
+    dr = !git d | xargs git reset --
+    typechange = status -s | awk '$1=="T"{print $2}' | xargs git checkout
+    g = !git graph -m simple -s round --color always | less -R
+    log-jj = !jj log
+    br = switch
+    review = diff origin/master...
+
+[help]
+    autocorrect = 1
+
+[ghq]
+    root = ~/src
+[credential]
+    helper = 
+[credential "https://github.com"]
+	helper = !gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = !gh auth git-credential
+
+
+[delta]
+    features = decorations side-by-side line-numbers 
+    navigate = true
+    hyperlinks = true
+    syntax-theme = Nord
+    line-numbers-left-format = "{nm:>4} "
+    line-numbers-right-format = "{np:>4} "
+    blame-separator-format = "┊{n:^4}"
+    keep-plus-minus-markers = false
+[delta "decorations"]
+    file-added-label = ""
+    file-modified-label = "柳"
+    file-removed-label = ""
+    file-style = white none "#394b70"
+    file-decoration-style = none
+    hunk-header-decoration-style = none
+    hunk-header-style = orange none "#394b70"
+    hunk-label = ""
+
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true

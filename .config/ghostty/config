@@ -1,0 +1,5 @@
+theme = catppuccin-mocha
+macos-titlebar-proxy-icon = hidden
+macos-icon = custom-style
+macos-icon-frame = plastic
+copy-on-select = true
