@@ -1,0 +1,69 @@
+[user]
+    name = yk-kd
+    email = yosuke.komada@gmail.com
+
+[core]
+    pager = less -q -R
+    preloadindex = true
+    quotepath = false
+
+[color]
+    ui = auto
+
+[color "diff"]
+    # http://qiita.com/qurage/items/452f2debb64e2708a46c
+    meta = 242 238
+    frag = 239 236
+    old = 167 normal
+    new = 030 normal
+    context = 240
+    commit = 246 024
+
+[branch]
+    autosetupmerge = true
+
+[pager]
+    log  = diff-highlight | less -RX
+    show = diff-highlight | less -RX
+    diff = diff-highlight | less -RX
+
+[diff]
+    tool      = vimdiff
+    algorithm = histogram
+    compactionHeuristic = true
+
+[merge]
+    tool = vimdiff
+
+[push]
+    default = current
+[alias]
+    b = branch
+    c = commit
+    co = "!f() { args=$@; if [ -z \"$args\" ]; then branch=$(git branch --all | grep -v HEAD | fzf --preview 'echo {} | cut -c 3- | xargs git log --color=always'); git checkout $(echo $branch | sed 's#remotes/[^/]*/##'); else git checkout $args; fi }; f"
+    st = status
+    up = pull --rebase        # pull rebase
+    po  = push origin         # push origin
+    pof = push -f origin      # force
+    pu  = push -u origin      # push origin and set upstream
+    d = "!f() { args=$@; [ -z \"$args\" ] && args=HEAD; ([ \"$args\" = \"HEAD\" ] && git status --short || git diff --name-status $args | sed 's/\t/  /') | fzf --preview \"echo {} | cut -c 4- | xargs git diff --color=always $args --\" --multi --height 90% | cut -c 4-; }; f"
+    da = !git d | xargs git add --
+    dr = !git d | xargs git reset --
+    typechange = status -s | awk '$1=="T"{print $2}' | xargs git checkout
+    graph = log --graph --date-order --all --pretty=format:'%h %Cred%d %Cgreen%ad %Cblue%cn %Creset%s' --date=short
+    br = switch
+    review = diff origin/master...
+
+[help]
+    autocorrect = 1
+
+[ghq]
+    root = ~/src
+[credential]
+    helper = 
+[credential "https://github.com"]
+	helper = 
+	helper = !/usr/local/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/usr/local/bin/gh auth git-credential

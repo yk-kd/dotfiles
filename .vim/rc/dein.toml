@@ -1,0 +1,109 @@
+[[plugins]]
+repo = 'Shougo/dein.vim'
+
+[[plugins]]
+repo = 'wsdjeg/dein-ui.vim'
+
+[[plugins]]
+repo = 'reedes/vim-colors-pencil'
+
+[[plugins]]
+repo = 'arcticicestudio/nord-vim'
+
+[[plugins]]
+repo = 'cocopon/iceberg.vim'
+
+[[plugins]]
+repo = 'xero/sourcerer.vim'
+
+[[plugins]]
+repo = 'joshdick/onedark.vim'
+
+#[[plugins]]
+#repo = 'itchyny/lightline.vim'
+#depends_on = 'sourcerer.vim'
+#hook_add = '''
+#source ~/.vim/rc/plugins/lightline.rc.vim
+#'''
+[[plugins]]
+repo = 'vim-airline/vim-airline'
+
+[[plugins]]
+repo = 'thinca/vim-ft-diff_fold'
+
+[[plugins]]
+repo = 'thinca/vim-ft-help_fold'
+
+[[plugins]]
+repo = 'vim-jp/autofmt'
+
+[[plugins]]
+repo = 'kana/vim-textobj-user'
+
+[[plugins]]
+repo = 'kana/vim-operator-user'
+
+[[plugins]]
+repo = 'rcmdnk/vim-markdown'
+
+[[plugins]]
+repo = 'vim-jp/vimdoc-ja'
+
+[[plugins]]
+repo = 'thinca/vim-themis'
+
+[[plugins]]
+repo = 'ujihisa/neco-look'
+
+[[plugins]]
+repo = 'nixprime/cpsm'
+build = 'sh -c "PY3=ON ./install.sh"'
+
+[[plugins]]
+repo = 'Shirk/vim-gas'
+
+[[plugins]]
+repo = 'chrisbra/vim-zsh'
+
+[[plugins]]
+repo = 'roxma/vim-hug-neovim-rpc'
+on_if = '!has("nvim")'
+
+[[plugins]]
+repo = 'HerringtonDarkholme/yats.vim'
+
+[[plugins]]
+repo = 'roxma/nvim-yarp'
+
+# [[plugins]]
+# repo = 'Shougo/deoppet.nvim'
+
+[[plugins]]
+repo = 'editorconfig/editorconfig-vim'
+
+[[plugins]]
+repo = 'lambdalisue/gina.vim'
+
+[[plugins]]
+repo = 'autozimu/LanguageClient-neovim'
+rev = 'next'
+build = 'bash install.sh'
+hook_add = '''
+let g:LanguageClient_serverCommands = {
+    \ 'go': ['~/go/bin/gopls', '-mode', 'stdio'],
+    \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
+    \ 'python': ['/usr/local/bin/pyls'],
+    \ 'typescript': ['typescript-language-server', '--stdio', '--tsserver-path', 'node_modules/.bin/tsserver'], 
+    \ }
+let g:LanguageClient_rootMarkers = {                                      
+    \ 'go': ['go.mod'],
+    \ 'haskell': ['*.cabal'],
+    \ }   
+let g:LanguageClient_loadSettings = 0
+nnoremap <F5> :call LanguageClient_contextMenu()<CR>
+nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
+nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
+let g:LanguageClient_loggingFile = expand('~/.vim/LanguageClient.log')
+'''
+

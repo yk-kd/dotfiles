@@ -1,0 +1,233 @@
+
+nnoremap s<Space> <Cmd>Ddu
+  \ -name=files file_rec
+  \ -source-option-path='`fnamemodify($MYVIMRC, ':h').'/rc'`'<CR>
+nnoremap ss
+  \ <Cmd>Ddu -name=files file_point file_old
+  \ `finddir('.git', ';') != '' ? 'file_external' : 'file_rec'`
+  \ -sync -ui-param-displaySourceName=short<CR>
+
+"nnoremap * <Cmd>Ddu
+"  \ -name=search line -input=`expand('<cword>')`
+"  \ -ui-param-startFilter=v:false<CR>
+nnoremap ;g <Cmd>Ddu
+  \ -name=search rg
+  \ -ui-param-ignoreEmpty
+  \ -source-param-input=`input('Pattern: ')`<CR>
+"nnoremap n <Cmd>Ddu
+"  \ -name=search -resume
+"  \ -ui-param-startFilter=v:false<CR>
+nnoremap ;r <Cmd>Ddu
+  \ -buffer-name=register register
+  \ -ui-param-autoResize<CR>
+nnoremap ,fd <Cmd>Ddu
+  \ -name=files file_rg<CR>
+xnoremap <expr> ;r (mode() ==# 'V' ? '"_R<Esc>' : '"_d') .
+  \ '<Cmd>Ddu -buffer-name=register register
+  \  -source-option-defaultAction=insert -ui-param-autoResize<CR>'
+
+call ddu#custom#alias('source', 'file_rg', 'file_external')
+call ddu#custom#patch_global({
+    \   'ui': 'ff',
+    \   'sourceOptions': {
+    \     '_': {
+    \       'ignoreCase': v:true,
+    \       'matchers': ['matcher_substring'],
+    \     },
+    \     'file_old': {
+    \       'matchers': [
+    \         'matcher_substring', 'matcher_relative', 'matcher_hidden',
+    \       ],
+    \     },
+    \     'file_external': {
+    \       'matchers': [
+    \         'matcher_substring', 'matcher_hidden',
+    \       ],
+    \     },
+    \     'file_rec': {
+    \       'matchers': [
+    \         'matcher_substring', 'matcher_hidden',
+    \       ],
+    \     },
+    \     'file': {
+    \       'matchers': [
+    \         'matcher_substring', 'matcher_hidden',
+    \       ],
+    \     },
+    \   },
+    \   'sourceParams': {
+    \     'file_external': {
+    \       'cmd': ['git', 'ls-files', '-co', '--exclude-standard'],
+    \     },
+    \   },
+    \   'uiParams': {
+    \     'ff': {
+    \       'split': 'floating',
+    \       'floatingBorder': 'rounded',
+    \       'filterSplitDirection': 'floating',
+    \       'filterFloatingPosition': 'top',
+    \     },
+    \   },
+    \   'kindOptions': {
+    \     'file': {
+    \       'defaultAction': 'open',
+    \     },
+    \     'word': {
+    \       'defaultAction': 'append',
+    \     },
+    \     'deol': {
+    \       'defaultAction': 'switch',
+    \     },
+    \     'action': {
+    \       'defaultAction': 'do',
+    \     },
+    \   },
+    \   'actionOptions': {
+    \     'narrow': {
+    \       'quit': v:false,
+    \     },
+    \   },
+    \ })
+call ddu#custom#patch_local('files', {
+    \   'uiParams': {
+    \     'ff': {
+    \       'previewFloating': v:true,
+    \       'previewVertical': v:true,
+    \       'previewFloatingBorder': 'rounded',
+    \       'previewCol': &columns / 2 + 4,
+    \       'previewRow': &lines/10,
+    \       'previewWidth': 80,
+    \       'previewHeight': &lines * 4 / 5,
+    \       'winCol': &columns /2 - 82,
+    \       'winRow': &lines/10 + 3,
+    \       'winWidth': 80,
+    \       'winHeight':&lines * 4/5 - 3,
+    \       'autoAction': {'name': 'preview'},
+    \     }
+    \   },
+    \ })
+call ddu#custom#patch_global({
+    \   'sourceParams': {
+    \     'file_rg': {
+    \       'cmd': ['rg', '--files', '--ignore',
+    \               '--no-messages'],
+    \       'updateItems': 50000,
+    \     },
+    \     'rg': {
+    \       'args': [
+    \         '--ignore-case', '--column', '--no-heading',
+    \       ],
+    \     },
+    \   }
+    \ })
+call ddu#custom#patch_global({
+    \   'filterParams': {
+    \     'matcher_substring': {
+    \       'highlightMatched': 'Search',
+    \     },
+    \   }
+    \ })
+call ddu#custom#patch_local('filer', {
+\   'ui': 'filer',
+\   'sources': [
+\     {
+\       'name': 'file',
+\       'params': {},
+\     },
+\   ],
+\   'sourceOptions': {
+\     '_': {
+\       'columns': ['icon_filename'],
+\     },
+\   },
+\   'kindOptions': {
+\     'file': {
+\       'defaultAction': 'open',
+\     },
+\   },
+\   'uiParams': {
+\     'filer': {
+\       'winWidth': 40,
+\       'split': 'vertical',
+\       'splitDirection': 'topleft',
+\     }
+\   },
+\ })
+nnoremap <Leader>f <Cmd>call ddu#start({
+  \   'name': 'filer',
+  \   'ui': 'filer',
+  \   'resume': v:true,
+  \   'sources': [{'name': 'file'}]
+  \ })<CR>
+"ddu-key-setting
+autocmd FileType ddu-ff call s:ddu_my_settings()
+function! s:ddu_my_settings() abort
+  nnoremap <buffer><silent> <CR>
+        \ <Cmd>call ddu#ui#ff#do_action('itemAction')<CR>
+  nnoremap <buffer><silent> <Space>
+        \ <Cmd>call ddu#ui#ff#do_action('toggleSelectItem')<CR>
+  nnoremap <buffer><silent> i
+        \ <Cmd>call ddu#ui#ff#do_action('openFilterWindow')<CR>
+  nnoremap <buffer><silent> p
+        \ <Cmd>call ddu#ui#ff#do_action('preview')<CR>
+  nnoremap <buffer><silent> q
+        \ <Cmd>call ddu#ui#ff#do_action('quit')<CR>
+endfunction
+
+autocmd FileType ddu-ff-filter call s:ddu_filter_my_settings()
+function! s:ddu_filter_my_settings() abort
+  inoremap <buffer><silent> <CR>
+  \ <Esc><Cmd>close<CR>
+  nnoremap <buffer><silent> <CR>
+  \ <Cmd>close<CR>
+  nnoremap <buffer><silent> q
+  \ <Cmd>close<CR>
+endfunction
+
+autocmd FileType ddu-filer call s:ddu_filer_my_settings()
+function! s:ddu_filer_my_settings() abort
+  nnoremap <buffer><silent><expr> <CR>
+    \ ddu#ui#filer#is_directory() ?
+    \ "<Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'narrow'})<CR>" :
+    \ "<Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'open'})<CR>"
+
+  nnoremap <buffer><silent><expr> <Space>
+    \ ddu#ui#filer#is_directory() ?
+    \ "<Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'narrow'})<CR>" :
+    \ "<Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'open', 'params': {'command': 'split'}})<CR>"
+  nnoremap <buffer> o
+    \ <Cmd>call ddu#ui#filer#do_action('expandItem', {'mode': 'toggle'})<CR>
+  nnoremap <buffer><silent> <Esc>
+    \ <Cmd>call ddu#ui#filer#do_action('quit')<CR>
+
+  nnoremap <buffer><silent> q
+    \ <Cmd>call ddu#ui#filer#do_action('quit')<CR>
+
+  nnoremap <buffer><silent> ..
+    \ <Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'narrow', 'params': {'path': '..'}})<CR>
+
+  nnoremap <buffer><silent> c
+    \ <Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'copy'})<CR>
+
+  nnoremap <buffer><silent> p
+    \ <Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'paste'})<CR>
+
+  nnoremap <buffer><silent> d
+    \ <Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'delete'})<CR>
+
+  nnoremap <buffer><silent> r
+    \ <Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'rename'})<CR>
+
+  nnoremap <buffer><silent> mv
+    \ <Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'move'})<CR>
+
+  nnoremap <buffer><silent> t
+    \ <Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'newFile'})<CR>
+
+  nnoremap <buffer><silent> mk
+    \ <Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'newDirectory'})<CR>
+
+  nnoremap <buffer><silent> yy
+    \ <Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'yank'})<CR>
+endfunction
+nnoremap <space>b :<C-u>Ddu buffer<CR>
