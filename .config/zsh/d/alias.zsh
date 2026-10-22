@@ -13,6 +13,8 @@ if type gomi &>/dev/null; then
   alias rm="gomi"
 fi
 
+alias cat="bat -p"
+
 # process
 # alias j="jobs -l"
 alias 'ps?'='pgrep -l -f'
@@ -78,3 +80,74 @@ alias -s {gz,tgz,zip,lzh,bz2,tbz,Z,tar,arj,xz,rar}=x
 alias ydl='youtube-dl -f mp4 $@'
 alias ydlx='youtube-dl -x --audio-format mp3 $@'
 
+
+function switch_aws() {
+    config=$(aws configure list-profiles | sort | fzf)
+    unset AWS_ACCESS_KEY_ID
+    unset AWS_SECRET_ACCESS_KEY
+    export AWS_DEFAULT_PROFILE=$config
+}
+
+alias awsp=switch_aws
+assume_role() {
+  # すべての AWS プロファイルを取得
+  profiles=($(awk '/^\[profile / {gsub(/\[profile |]/,""); print $0}' ~/.aws/config))
+
+  if [[ -z "$profiles" ]]; then
+    echo "No AWS profiles found in ~/.aws/config"
+    return 1
+  fi
+
+  # fzfでプロファイルを選択
+  selected_profile=$(printf '%s\n' "${profiles[@]}" | fzf --prompt="Select AWS Profile: ")
+
+  if [[ -z "$selected_profile" ]]; then
+    echo "No profile selected"
+    return 1
+  fi
+
+  # MFAデバイスのARNを取得
+  mfa_serial=$(aws configure get mfa_serial --profile "$selected_profile")
+  if [[ -z "$mfa_serial" ]]; then
+    echo "MFA device ARN not configured for profile $selected_profile"
+    return 1
+  fi
+
+  # MFAコードの入力
+  mfa_token=$(gum input --placeholder "MFA Token")
+  if [[ -z "$mfa_token" ]]; then
+    echo "MFA token not provided"
+    return 1
+  fi
+
+  # assume-role 実行
+  role_arn=$(aws configure get role_arn --profile "$selected_profile")
+  source_profile=$(aws configure get source_profile --profile "$selected_profile")
+
+  if [[ -z "$role_arn" || -z "$source_profile" ]]; then
+    echo "role_arn or source_profile not configured in profile $selected_profile"
+    return 1
+  fi
+
+  session_name="assumed-role-$(date +%s)"
+
+  creds=$(aws sts assume-role \
+    --profile "$source_profile" \
+    --role-arn "$role_arn" \
+    --role-session-name "$session_name" \
+    --serial-number "$mfa_serial" \
+    --token-code "$mfa_token" \
+    --output json)
+
+  if [[ $? -ne 0 ]]; then
+    echo "Failed to assume role"
+    return 1
+  fi
+
+  unset AWS_DEFAULT_PROFILE
+  export AWS_ACCESS_KEY_ID=$(echo "$creds" | jq -r .Credentials.AccessKeyId)
+  export AWS_SECRET_ACCESS_KEY=$(echo "$creds" | jq -r .Credentials.SecretAccessKey)
+  export AWS_SESSION_TOKEN=$(echo "$creds" | jq -r .Credentials.SessionToken)
+
+  echo "Successfully assumed role for profile: $selected_profile"
+}

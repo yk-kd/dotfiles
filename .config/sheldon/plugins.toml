@@ -29,10 +29,8 @@ inline = "autoload -Uz compinit && zsh-defer compinit -d $ZCACHEDIR/zcompdump"
 [plugins.colors]
 inline = 'autoload -Uz colors && zsh-defer colors'
 
-[plugins.pure]
-github = "sindresorhus/pure"
-use = ["async.zsh", "pure.zsh"]
-apply = ["source"]
+[plugins.powerlevel10k]
+github = "romkatv/powerlevel10k"
 
 [plugins.zsh-completions]
 github = "zsh-users/zsh-completions"
@@ -48,8 +46,8 @@ use = ["{{ name }}.zsh"]
 github = "zsh-users/zsh-history-substring-search"
 use = ["{{ name }}.zsh"]
 
-[plugins."z.lua"]
-github = "skywind3000/z.lua"
+[plugins.zoxide]
+github = "ajeetdsouza/zoxide"
 
 [plugins.local-sync]
 local = "~/.config/zsh/s"
@@ -59,5 +57,3 @@ apply = ["source"]
 [plugins.local-defer]
 local = "~/.config/zsh/d"
 use = ["*.zsh"]
-
-

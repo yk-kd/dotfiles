@@ -30,6 +30,9 @@ autoload -Uz run-help-svk
 autoload -Uz run-help-svn
 
 
+# bun completions
+[ -s "/Users/yousuke.komada.789/.bun/_bun" ] && source "/Users/yousuke.komada.789/.bun/_bun"
+
 if type carapace &>/dev/null; then
   export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense' # optional
   zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'

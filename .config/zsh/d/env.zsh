@@ -1,6 +1,8 @@
 
 REPORTTIME=3
 
+export HOMEBREW_NO_ASK=1
+
 # dotnet
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
@@ -15,6 +17,8 @@ export INTERACTIVE_FILTER="fzf:peco:percol:gof:pick"
 export EZA_ICONS_AUTO=1
 
 export FZF_DEFAULT_OPTS='
+--height 40%
+--reverse
 --extended
 --ansi
 --multi

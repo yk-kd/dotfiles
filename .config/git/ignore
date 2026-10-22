@@ -75,3 +75,15 @@ Desktop.ini
 .vscode/*
 vs-build/*
 CMakeSettings.json
+
+mise.local.toml
+compose.local.yaml
+
+**/.claude/settings.local.json
+
+CLAUDE.local.md
+AGENTS.local.md
+
+*.patch
+
+.npmrc

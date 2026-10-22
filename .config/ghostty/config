@@ -1,5 +1,11 @@
-theme = catppuccin-mocha
+theme = Catppuccin Mocha
+macos-option-as-alt = true
 macos-titlebar-proxy-icon = hidden
 macos-icon = custom-style
 macos-icon-frame = plastic
 copy-on-select = true
+font-family = "HackGen35 Console NF" 
+shell-integration = zsh
+keybind = ¥=text:\\
+scrollback-limit = 1073741824
+

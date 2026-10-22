@@ -1,0 +1,7 @@
+theme = Catppuccin Mocha
+macos-titlebar-proxy-icon = hidden
+macos-icon = custom-style
+macos-icon-frame = plastic
+copy-on-select = true
+font-family = "HackGen35 Console NF" 
+shell-integration = zsh

@@ -25,6 +25,9 @@
     conflictstyle = diff3
     tool = nvim -d
 
+[pull]
+    rebase = true
+	autostash = true
 [push]
     default = current
 
@@ -85,9 +88,9 @@
     blame-separator-format = "┊{n:^4}"
     keep-plus-minus-markers = false
 [delta "decorations"]
-    file-added-label = ""
-    file-modified-label = "柳"
-    file-removed-label = ""
+    file-added-label = ""
+    file-modified-label = ""
+    file-removed-label = ""
     file-style = white none "#394b70"
     file-decoration-style = none
     hunk-header-decoration-style = none
@@ -99,3 +102,12 @@
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
+[init]
+	defaultBranch = main
+[rerere]
+	enabled = true
+[rebase]
+	autostash = true
+[merge "mergiraf"]
+	name = mergiraf
+	driver = mergiraf merge --git %O %A %B -s %S -x %X -y %Y -p %P -l %L
